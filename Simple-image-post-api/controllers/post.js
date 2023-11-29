@@ -503,10 +503,18 @@ const deletePost = async (req, res, next) => {
             return res.status(401).send();
         }
 
-        await db.post.destroy({where: {id: postId}});
+        const targetImages = await db.media.findAll({where: {postId: postId}});
 
-        return res.status(200).send('Done!');
+        let destroy = targetImages.map(async e => {
+           return cloudinary.v2.uploader.destroy(e.url.split('/')[e.url.split('/').length - 1].split('.')[0]).catch(err => {throw err});
+        })
 
+        Promise.all(destroy).then(async () => {
+            await db.post.destroy({where: {id: postId}});
+
+            return res.status(200).send('Done!');
+        });
+        
     }  catch (err) {
         err.from = 'deletePost';
         next(err);

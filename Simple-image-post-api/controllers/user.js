@@ -122,46 +122,8 @@ const getMe = async (req, res, next) => {
             ]
         })
 
-
-        /*const following = await db.follower.findAll({
-            where: {
-                followerId: userId,
-            },
-            include: [
-                {
-                    model: db.user,
-                    as: 'Accepter',
-                    attributes: {
-                        exclude: ['password']
-                    }
-                },
-            ]
-        });
-
-
-        const follower = await db.follower.findAll({
-            where: {
-                userId: userId,
-            },
-            include: [
-                {
-                    model: db.user,
-                    as: 'Requester',
-                    attributes: {
-                        exclude: ['password']
-                    }
-                },
-            ]
-        });
-
-        let me = targetUser;
-        me.following = following;
-        me.follower = follower;*/
-
-
         return res.status(200).send(targetUser);
         
-
     } catch (err) {
         err.from = 'getMe'
         return next(err);
@@ -180,21 +142,38 @@ const removeUser = async (req, res, next) => {
             return res.status(401).send();
         }
 
+        const targetPost = await db.post.findAll({where: {userId: userId}});
 
-        if(targetUser.profileImage) {
-            await cloudinary.v2.uploader.destroy(targetUser.profileImage.split('/')[targetUser.profileImage.split('/').length-1].split('.')[0])
-            .catch(err => {
-                throw err;
-            })
-        }
-         
-        await db.user.destroy({
-            where: {
-                id: userId
+        if(targetPost[0]) {
+            const targetImages = await db.media.findAll({where: {postId: targetPost.map(e => e.id)}});
+
+            const destroy = targetImages.map(async e => {
+                return cloudinary.v2.uploader.destroy(e.url.split('/')[e.url.split('/').length -1].split('.')[0]).catch(err => {throw err});
+            });
+
+            if(targetUser.profileImage) {
+                const destroyImg = cloudinary.v2.uploader.destroy(targetUser.profileImage.split('/')[targetUser.profileImage.split('/').length -1].split('.')[0]).catch(err => {throw err});
+                destroy.push(destroyImg);
             }
-        })
-    
-        res.status(200).send({message: 'The account has been removed'});
+
+            Promise.all(destroy).then(async() => {        
+                await db.user.destroy({
+                    where: {
+                        id: userId
+                    }
+                })
+            
+                return res.status(200).send({message: 'Account has been removed'});
+            })
+        } else {
+            await db.user.destroy({
+                where: {
+                    id: userId
+                }
+            })
+        
+            return res.status(200).send({message: 'The account has been removed'});
+        }
 
     } catch (err) {
         err.from = 'removeUser'
