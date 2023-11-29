@@ -15,10 +15,10 @@ export const handleErr = (err) => {
                 position: 'top-center',
                 autoClose: 2000,
             });
-        } /*else if(err.response.status === 404) {
-            window.location.replace(`${FONTEND_URL}/error/404`);
+        } else if(err.response.status === 404) {
+            window.location.href = '/';
 
-        } else if(err.response.status === 500) {
+        } /*else if(err.response.status === 500) {
             window.location.replace(`${FONTEND_URL}/error/500`);
         } else {
             window.location.replace(`${FONTEND_URL}/error/${err.response.status}/${err.response.data.message}`);
