@@ -5,7 +5,7 @@
 ใช้ Vite.js + React + Tailwind CSS ในส่วนหน้าบ้าน </br>
 ใช้ Node.js + Express.js ในการสร้าง API </br>
 ใช้ฐานข้อมูล MySql </br>
-ใช้ Cloudinary ในการเก็บไฟล์ภาพ </br>
+ใช้ Cloudinary จัดการรูปภาพ </br>
 
 วิดีโอตัวอย่าง https://www.youtube.com/watch?v=Wa3drbFGWgU </br>
 
