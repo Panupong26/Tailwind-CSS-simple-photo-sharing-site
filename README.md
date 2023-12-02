@@ -1,4 +1,4 @@
-# Tailwind-CSS-simple-sharing-site
+# Tailwind-CSS-simple-photo-sharing-site
 
 โปรเจคนี้เป็นโปรเจคที่ตั้งใจทำขึ้นเพื่อเน้นการใช้งาน Tailwind CSS ในการพัฒนา โดยใช้รูปแบบจากแอป Instagram เป็นแบบอย่างครับ
 
