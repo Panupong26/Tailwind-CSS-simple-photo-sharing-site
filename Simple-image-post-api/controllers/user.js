@@ -11,11 +11,11 @@ const createUser = async (req, res, next) => {
         const input = req.body.input;
 
         if(!input.username || !input.password) {
-            return res.status(400).send({message: 'Invalide request value'});
+            return res.status(400).send({message: 'Invalid request value'});
         }
     
-        if(!(/^[a-zA-Z0-9]{6,30}$/.test(input.username)) || !(/^[a-zA-Z0-9]{6,30}$/.test(input.password))) {
-            return res.status(400).send({message: 'Invalide request value'});
+        if(!(/^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/.test(input.username)) || !(/^[a-zA-Z0-9]{6,30}$/.test(input.password))) {
+            return res.status(400).send({message: 'Invalid request value'});
         } 
 
         const sameUsername = await db.user.findOne({
@@ -31,7 +31,7 @@ const createUser = async (req, res, next) => {
         await db.user.create({
             username: input.username,
             password: bcrypt.hashSync(input.password, salt),
-            profileName: input.username
+            profileName: input.username.split('@')[0]
         })
 
         return res.status(201).send({message: 'Succesful!!'});
@@ -65,7 +65,7 @@ const login = async (req, res, next) => {
         }
     
         const payload = {
-            userId: targetUser.id
+            userEmail: targetUser.username
         }
     
         const token = jwt.sign(payload, process.env.JWT_SECRETKEY, {expiresIn: +process.env.JWT_EXP});
@@ -80,11 +80,11 @@ const login = async (req, res, next) => {
 
 const getMe = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userEmail = req.user.email;
 
         const targetUser = await db.user.findOne({
             where: {
-                id: userId
+                username: userEmail
             },
             include: [
                 {
@@ -132,10 +132,11 @@ const getMe = async (req, res, next) => {
 
 const removeUser = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userEmail = req.user.username;
+        const userId = req.user.id
 
         const targetUser =  await db.user.findOne({
-            where: {id: userId}
+            where: {username: userEmail}
         })
 
         if(!targetUser) {

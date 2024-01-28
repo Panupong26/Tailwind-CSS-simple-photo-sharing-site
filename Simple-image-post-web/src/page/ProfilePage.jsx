@@ -97,7 +97,9 @@ export default function ProfilePage() {
                 getUserPost(res.data.user.id);
             })
             .catch(err => {
-                handleErr(err);
+                console.log(name);
+                console.log(me);
+                //handleErr(err);
             })
         };
 
