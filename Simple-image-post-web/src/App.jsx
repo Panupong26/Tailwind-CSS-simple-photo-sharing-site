@@ -8,14 +8,15 @@ import LoginPage from './page/LoginPage';
 import RegisterPage from './page/RegisterPage';
 import PostPage from './page/PostPage';
 import Loading from './component/Loading';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { authContext } from './contexts/AuthContextProvider';
 import { loadingContext } from './contexts/LoadingContextProvider';
 
 
 function App() {
   const { status } = useContext(authContext);
-  const { isLoading } = useContext(loadingContext)
+  const { isLoading } = useContext(loadingContext);
+
   
 
   return (<>
